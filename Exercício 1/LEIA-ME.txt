@@ -1,0 +1,6 @@
+Para executar a solução ProprietarioAutomovel, abra a pasta do projeto no terminal e digite os seguintes comandos:
+
+
+gcc ProprietarioAutomovel.c
+
+./a.out
