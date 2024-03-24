@@ -30,6 +30,7 @@ int main() {
 
     int opcao=0;
     char CPF[11];
+    char placa[7];
 
     do {
         printf("Menu:\n");
@@ -67,7 +68,7 @@ int main() {
                     printf("Carro %d:\n", i + 1);
 
                     printf("Placa do carro: ");
-                    scanf(" %[^\n]", proprietario.carros[i].placa);
+                    scanf(" %[^\n]", placa);
 
                     printf("Marca do carro: ");
                     scanf(" %[^\n]", proprietario.carros[i].marca);
@@ -77,6 +78,15 @@ int main() {
 
                     printf("Ano do carro: ");
                     scanf(" %[^\n]", proprietario.carros[i].ano);
+
+                    while(fread(&proprietario, sizeof(ProprietarioAutomovel), 1, arquivoProprietario)){
+                        if(strcmp(CPF, proprietario.cpf) == 0){
+                            printf("Automóvel já cadastrado.\n");
+                            break;
+                        }
+                    }
+                    
+                    strcpy(proprietario.carros[i].placa, placa);
 
                     fwrite(&carro, 1, sizeof(Automovel), arquivoAutomoveis);
                 }
