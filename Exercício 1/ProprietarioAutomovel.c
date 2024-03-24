@@ -2,127 +2,110 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Definição da estrutura para o carro
-struct Carro {
+// Strucut com dados do automóvel
+typedef struct {
+    char placa[8];
     char marca[50];
     char modelo[50];
-    int ano;
-};
+    char ano[4];
+} Automovel;
 
-// Definição da estrutura para o proprietário
-struct Proprietario {
+// Struct com dados do cliente / proprietário do automóvel
+typedef struct {
     char nome[100];
-    int idade;
     char cpf[12];
-    char rg[8];
-    char cnh[11];
-    struct Carro carros[10]; // Permitindo até 10 carros por proprietário
-    int num_carros; // Número atual de carros cadastrados para este proprietário
-};
+    int num_carros;
+    char carros[10]; 
+}ProprietarioAutomovel;
 
-// Função para cadastrar um novo carro
-void cadastrarCarro(struct Carro *carro) {
-    printf("Marca do carro: ");
-    scanf("%s", carro->marca);
-    printf("Modelo do carro: ");
-    scanf("%s", carro->modelo);
-    printf("Ano do carro: ");
-    scanf("%d", &carro->ano);
-}
-
-// Função para cadastrar um novo proprietário e seus carros
-void cadastrarProprietario(struct Proprietario *proprietario) {
-    printf("Nome do proprietario: ");
-    fgets(proprietario->nome, 100, stdin);
-
-    printf("Idade do proprietario: ");
-    scanf("%d", &proprietario->idade);
-    getchar();
-
-    printf("Número do CPF do proprietario: ");
-    scanf("%s", proprietario->cpf);
-    proprietario->cpf[strcspn(proprietario->cpf, "\n")] = '\0'; // Remover o caractere de nova linha
-
-
-    printf("Número do RG do proprietario: ");
-    scanf("%s", proprietario->rg);
-    proprietario->rg[strcspn(proprietario->rg, "\n")] = '\0';
-
-    printf("Número da CNH do proprietario: ");
-    scanf("%s", proprietario->cnh);
-    proprietario->cnh[strcspn(proprietario->cnh, "\n")] = '\0';
-
-    printf("Quantos carros deseja cadastrar para este proprietario? ");
-    scanf("%d", &proprietario->num_carros);
-
-    printf("\n=== Cadastro de Carros ===\n");
-    for (int i = 0; i < proprietario->num_carros; i++) {
-        printf("Carro %d:\n", i + 1);
-        cadastrarCarro(&(proprietario->carros[i]));
-    }
-}
-
-// Função para exibir os dados de um proprietário e seus carros
-void exibirProprietario(struct Proprietario proprietario) {
-    printf("Nome: %s\n", proprietario.nome);
-    printf("Idade: %d\n", proprietario.idade);
-    printf("CPF: %s\n", proprietario.cpf);
-    printf("RG: %s\n", proprietario.rg);
-    printf("CNH: %s\n", proprietario.cnh);
-    printf("Carros:\n");
-    for (int i = 0; i < proprietario.num_carros; i++) {
-        printf("  Carro %d:\n", i + 1);
-        printf("    Marca: %s\n", proprietario.carros[i].marca);
-        printf("    Modelo: %s\n", proprietario.carros[i].modelo);
-        printf("    Ano: %d\n", proprietario.carros[i].ano);
-    }
-    printf("\n");
-}
+ProprietarioAutomovel proprietario;
+Automovel carro;
 
 int main() {
-    struct Proprietario proprietarios[100]; // Permitindo até 100 proprietários
-    int num_proprietarios = 0;
+    FILE *arquivoProprietario;
+    FILE* arquivoAutomoveis;
 
-    FILE *arquivo;
+    int opcao=0;
 
-    int opcao;
     do {
         printf("Menu:\n");
         printf("1. Cadastrar novo proprietario\n");
-        printf("0. Sair\n");
+        printf("2. Listar Usuários e Automóveis\n");
+        printf("3. Sair\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
-        getchar();
 
         switch (opcao) {
-            case 1:
-                if (num_proprietarios < 100) {
-                    printf("\n=== Cadastro de Proprietario ===\n");
-                    cadastrarProprietario(&proprietarios[num_proprietarios]);
-                    num_proprietarios++;
-                } else {
-                    printf("Limite de proprietarios atingido.\n");
-                }
-                break;
-            case 0:
-                arquivo = fopen("dados_proprietarios.bin", "wb");
-                if (arquivo == NULL) {
-                    printf("Erro ao abrir o arquivo.\n");
-                    return 1;
-                }
-                fwrite(proprietarios, sizeof(struct Proprietario), num_proprietarios, arquivo);
-                fclose(arquivo);
+            case 1:                 
+                arquivoProprietario = fopen("dadosProprietario.bin", "ab");
+                arquivoAutomoveis = fopen("dadosAutomovel.bin", "ab");
 
-                printf("Saindo...\n");
-                printf("\n=== Lista de Proprietarios e Carros ===\n");
-                for (int i = 0; i < num_proprietarios; i++) {
-                    exibirProprietario(proprietarios[i]);
+                printf("\n=== Cadastro de Proprietario ===\n");
+                printf("Nome do proprietario: ");
+                scanf(" %[^\n]", proprietario.nome);
+                printf("Número do CPF do proprietario: ");
+                scanf(" %s", proprietario.cpf);
+
+                printf("Quantos carros deseja cadastrar para este proprietario? ");
+                scanf(" %d", &proprietario.num_carros);
+
+                printf("\n=== Cadastro de Carros ===\n");
+                for (int i = 0; i < proprietario.num_carros; i++) {
+                    printf("Carro %d:\n", i + 1);
+
+                    printf("Placa do carro: ");
+                    scanf(" %[^\n]", carro.placa);
+
+                    printf("Marca do carro: ");
+                    scanf(" %[^\n]", carro.marca);
+
+                    printf("Modelo do carro: ");
+                    scanf(" %[^\n]", carro.modelo);
+
+                    printf("Ano do carro: ");
+                    scanf(" %[^\n]", carro.ano);
+
+                    fwrite(&carro, 1, sizeof(Automovel), arquivoAutomoveis);
                 }
+                
+                fwrite(&proprietario, sizeof(ProprietarioAutomovel), 1, arquivoProprietario);
+                
+                fclose(arquivoAutomoveis);
+                fclose(arquivoProprietario);
+        
+                printf("\n\nProprietário e carro(s) cadastrado(s)\n\n");
+
+                break;
+            case 2:
+                arquivoProprietario = fopen("dadosProprietario.bin", "rb");
+                arquivoAutomoveis = fopen("dadosAutomovel.bin", "rb");
+
+                while(fread(&proprietario, sizeof(ProprietarioAutomovel), 1, arquivoProprietario)){
+                     printf("\n=== Lista de Proprietários e Carros ===\n");
+
+                     printf("Proprietário: %s\n", proprietario.nome);
+                     printf("CPF: %s\n", proprietario.cpf);
+                     
+                     fseek(arquivoAutomoveis, 0, SEEK_SET);
+                     for(int j = 0; j < proprietario.num_carros; j++){
+                        printf("--Veiculo %d do proprietario--\n", j+1);
+                        printf("\tPlaca: %s\n", carro.placa);
+                        printf("\tMarca: %s\n", carro.marca);
+                        printf("\tModelo: %s\n", carro.modelo);
+                        printf("\tAno: %s\n", carro.ano);
+                        printf("\n");
+                     }
+
+                }
+                fclose(arquivoAutomoveis);
+                fclose(arquivoProprietario);
+
                 break;
             default:
                 printf("Opcao invalida. Tente novamente.\n");
+                break;
         }
-    } while (opcao != 0);
+    } while (opcao != 3);
 
     return 0;
 }
