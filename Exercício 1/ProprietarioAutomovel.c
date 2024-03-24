@@ -15,17 +15,21 @@ typedef struct {
     char nome[100];
     char cpf[12];
     int num_carros;
-    char carros[10]; 
+    Automovel carros[10]; 
 }ProprietarioAutomovel;
+
+
+FILE *arquivoProprietario;
+FILE* arquivoAutomoveis;
 
 ProprietarioAutomovel proprietario;
 Automovel carro;
 
 int main() {
-    FILE *arquivoProprietario;
-    FILE* arquivoAutomoveis;
+    
 
     int opcao=0;
+    char CPF[11];
 
     do {
         printf("Menu:\n");
@@ -44,8 +48,17 @@ int main() {
                 printf("Nome do proprietario: ");
                 scanf(" %[^\n]", proprietario.nome);
                 printf("Número do CPF do proprietario: ");
-                scanf(" %s", proprietario.cpf);
+                scanf(" %s", CPF);
 
+               while(fread(&proprietario, sizeof(ProprietarioAutomovel), 1, arquivoProprietario)){
+                    if(strcmp(CPF, proprietario.cpf) == 0){
+                        printf("Proprietário já cadastrado.\n");
+                        break;
+                    }
+               }
+
+                strcpy(proprietario.cpf, CPF);
+ 
                 printf("Quantos carros deseja cadastrar para este proprietario? ");
                 scanf(" %d", &proprietario.num_carros);
 
@@ -54,16 +67,16 @@ int main() {
                     printf("Carro %d:\n", i + 1);
 
                     printf("Placa do carro: ");
-                    scanf(" %[^\n]", carro.placa);
+                    scanf(" %[^\n]", proprietario.carros[i].placa);
 
                     printf("Marca do carro: ");
-                    scanf(" %[^\n]", carro.marca);
+                    scanf(" %[^\n]", proprietario.carros[i].marca);
 
                     printf("Modelo do carro: ");
-                    scanf(" %[^\n]", carro.modelo);
+                    scanf(" %[^\n]", proprietario.carros[i].modelo);
 
                     printf("Ano do carro: ");
-                    scanf(" %[^\n]", carro.ano);
+                    scanf(" %[^\n]", proprietario.carros[i].ano);
 
                     fwrite(&carro, 1, sizeof(Automovel), arquivoAutomoveis);
                 }
@@ -89,10 +102,10 @@ int main() {
                      fseek(arquivoAutomoveis, 0, SEEK_SET);
                      for(int j = 0; j < proprietario.num_carros; j++){
                         printf("--Veiculo %d do proprietario--\n", j+1);
-                        printf("\tPlaca: %s\n", carro.placa);
-                        printf("\tMarca: %s\n", carro.marca);
-                        printf("\tModelo: %s\n", carro.modelo);
-                        printf("\tAno: %s\n", carro.ano);
+                        printf("\tPlaca: %s\n", proprietario.carros[j].placa);
+                        printf("\tMarca: %s\n", proprietario.carros[j].marca);
+                        printf("\tModelo: %s\n", proprietario.carros[j].modelo);
+                        printf("\tAno: %s\n", proprietario.carros[j].ano);
                         printf("\n");
                      }
 
