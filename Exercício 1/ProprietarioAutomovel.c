@@ -18,17 +18,42 @@ typedef struct {
     Automovel carros[10]; 
 }ProprietarioAutomovel;
 
-
+//declaração de variáveis globais
 FILE *arquivoProprietario;
 FILE* arquivoAutomoveis;
 
 ProprietarioAutomovel proprietario;
 Automovel carro;
 
+//Declaração de estruturas auxiliares para ordenação
 FILE *arquivoAuxiliar;
 ProprietarioAutomovel auxiliado;
-
 ProprietarioAutomovel auxiliar[100];
+
+
+// Função para verificar se um proprietário já está cadastrado
+int verificarProprietarioCadastrado(char* cpf) {
+    arquivoProprietario = fopen("dadosProprietario.bin", "rb");
+    
+    // Reposicionar o cursor no início do arquivo
+    rewind(arquivoProprietario);
+    
+    // Variável para armazenar temporariamente os dados do proprietário lido do arquivo
+    ProprietarioAutomovel tempProprietario;
+    
+    // Ler cada registro do arquivo e comparar o CPF
+    while (fread(&tempProprietario, sizeof(ProprietarioAutomovel), 1, arquivoProprietario) == 1) {
+        if (strcmp(cpf, tempProprietario.cpf) == 0) {
+            return 1;
+            break; // Sai do loop assim que encontrar o proprietário
+        }
+    }
+    fclose(arquivoProprietario);
+    
+    // Retorna 1 se o proprietário foi encontrado, 0 caso contrário
+    return 0;
+}
+
 
 // Função que compara a ordenação de proprietários com a chave CPF
 int comparaCPF (const void *x, const void *y){
@@ -50,7 +75,7 @@ void ordenaCPF(){
 
     arquivoAuxiliar = fopen("dadosProprietario.bin", "wb");
 
-    //escreve os dados ordenados de volta o arquivo
+    //escreve os dados ordenados de volta no arquivo original
     int i=0;
     while(i < count){
         fwrite(&auxiliar[i], 1, sizeof(ProprietarioAutomovel), arquivoAuxiliar);
@@ -65,7 +90,7 @@ int main() {
     
 
     int opcao=0;
-    char CPF[11];
+    char CPF[12];
 
 
     do {
@@ -89,12 +114,10 @@ int main() {
                 scanf(" %s", CPF);
 
                 //verifica se o proprietário já foi cadastrado
-                while(fread(&proprietario, sizeof(ProprietarioAutomovel), 1, arquivoProprietario)){
-                    if(strcmp(CPF, proprietario.cpf) == 0){
-                        printf("Proprietário já cadastrado.\n");
-                        break;
-                    }
-               }
+                if(verificarProprietarioCadastrado(CPF) == 1) {
+                    printf("\nProprietário já cadastrado.\n\n");
+                    break;
+                }
 
                 strcpy(proprietario.cpf, CPF);
  
