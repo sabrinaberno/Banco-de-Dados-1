@@ -7,7 +7,7 @@ typedef struct {
     char placa[8];
     char marca[50];
     char modelo[50];
-    char ano[4];
+    char ano[5];
 } Automovel;
 
 // Struct com dados do cliente / proprietário do automóvel
@@ -25,22 +25,59 @@ FILE* arquivoAutomoveis;
 ProprietarioAutomovel proprietario;
 Automovel carro;
 
+FILE *arquivoAuxiliar;
+ProprietarioAutomovel auxiliado;
+
+ProprietarioAutomovel auxiliar[100];
+
+// Função que compara a ordenação de proprietários com a chave CPF
+int comparaCPF (const void *x, const void *y){
+    return strcmp(((ProprietarioAutomovel *)x)->cpf, ((ProprietarioAutomovel*)y)->cpf);
+}
+
+//Função que ordena proprietários por CPF usando o quick sort
+void ordenaCPF(){
+    int count=0;
+    arquivoAuxiliar = fopen("dadosProprietario.bin", "rb");
+    
+    //transfere os dados dos proprietários para o array auxiliar
+    while(fread(&auxiliar[count], sizeof(ProprietarioAutomovel), 1, arquivoAuxiliar)){
+        count++;
+    }
+
+    qsort(auxiliar, count, sizeof(ProprietarioAutomovel), comparaCPF);
+    fclose(arquivoAuxiliar);
+
+    arquivoAuxiliar = fopen("dadosProprietario.bin", "wb");
+
+    //escreve os dados ordenados de volta o arquivo
+    int i=0;
+    while(i < count){
+        fwrite(&auxiliar[i], 1, sizeof(ProprietarioAutomovel), arquivoAuxiliar);
+        i++;
+    }
+
+    fclose(arquivoAuxiliar);
+}
+
+
 int main() {
     
 
     int opcao=0;
     char CPF[11];
-    char placa[7];
+
 
     do {
         printf("Menu:\n");
         printf("1. Cadastrar novo proprietario\n");
-        printf("2. Listar Usuários e Automóveis\n");
+        printf("2. Listar usuários e seus automóveis por CPF\n");
         printf("3. Sair\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
 
         switch (opcao) {
+            //cadastro de um novo proprietário e seus automóveis
             case 1:                 
                 arquivoProprietario = fopen("dadosProprietario.bin", "ab");
                 arquivoAutomoveis = fopen("dadosAutomovel.bin", "ab");
@@ -51,7 +88,8 @@ int main() {
                 printf("Número do CPF do proprietario: ");
                 scanf(" %s", CPF);
 
-               while(fread(&proprietario, sizeof(ProprietarioAutomovel), 1, arquivoProprietario)){
+                //verifica se o proprietário já foi cadastrado
+                while(fread(&proprietario, sizeof(ProprietarioAutomovel), 1, arquivoProprietario)){
                     if(strcmp(CPF, proprietario.cpf) == 0){
                         printf("Proprietário já cadastrado.\n");
                         break;
@@ -63,12 +101,13 @@ int main() {
                 printf("Quantos carros deseja cadastrar para este proprietario? ");
                 scanf(" %d", &proprietario.num_carros);
 
+                //Cadastros do(s) carro(s) do proprietário
                 printf("\n=== Cadastro de Carros ===\n");
                 for (int i = 0; i < proprietario.num_carros; i++) {
-                    printf("Carro %d:\n", i + 1);
+                    printf("Carro %d:\n", (i+1));
 
                     printf("Placa do carro: ");
-                    scanf(" %[^\n]", placa);
+                    scanf(" %[^\n]", proprietario.carros[i].placa);
 
                     printf("Marca do carro: ");
                     scanf(" %[^\n]", proprietario.carros[i].marca);
@@ -79,16 +118,8 @@ int main() {
                     printf("Ano do carro: ");
                     scanf(" %[^\n]", proprietario.carros[i].ano);
 
-                    while(fread(&proprietario, sizeof(ProprietarioAutomovel), 1, arquivoProprietario)){
-                        if(strcmp(CPF, proprietario.cpf) == 0){
-                            printf("Automóvel já cadastrado.\n");
-                            break;
-                        }
-                    }
-                    
-                    strcpy(proprietario.carros[i].placa, placa);
-
                     fwrite(&carro, 1, sizeof(Automovel), arquivoAutomoveis);
+
                 }
                 
                 fwrite(&proprietario, sizeof(ProprietarioAutomovel), 1, arquivoProprietario);
@@ -99,30 +130,40 @@ int main() {
                 printf("\n\nProprietário e carro(s) cadastrado(s)\n\n");
 
                 break;
-            case 2:
+            //Lista de usuários ordenados por CPF
+            case 2: 
                 arquivoProprietario = fopen("dadosProprietario.bin", "rb");
                 arquivoAutomoveis = fopen("dadosAutomovel.bin", "rb");
+
+                ordenaCPF();
 
                 while(fread(&proprietario, sizeof(ProprietarioAutomovel), 1, arquivoProprietario)){
                      printf("\n=== Lista de Proprietários e Carros ===\n");
 
                      printf("Proprietário: %s\n", proprietario.nome);
                      printf("CPF: %s\n", proprietario.cpf);
-                     
-                     fseek(arquivoAutomoveis, 0, SEEK_SET);
-                     for(int j = 0; j < proprietario.num_carros; j++){
-                        printf("--Veiculo %d do proprietario--\n", j+1);
-                        printf("\tPlaca: %s\n", proprietario.carros[j].placa);
-                        printf("\tMarca: %s\n", proprietario.carros[j].marca);
-                        printf("\tModelo: %s\n", proprietario.carros[j].modelo);
-                        printf("\tAno: %s\n", proprietario.carros[j].ano);
-                        printf("\n");
-                     }
-
+                    
+                    fseek(arquivoAutomoveis, 0, SEEK_SET);
+                    for(int j = 0; j < proprietario.num_carros; j++){
+                         fread(&carro, sizeof(Automovel), 1, arquivoAutomoveis);
+                            printf("--Veiculo %d do proprietario--\n", j+1);
+                            printf("\tPlaca: %s\n", proprietario.carros[j].placa);
+                            printf("\tMarca: %s\n", proprietario.carros[j].marca);
+                            printf("\tModelo: %s\n", proprietario.carros[j].modelo);
+                            printf("\tAno: %s\n", proprietario.carros[j].ano);
+                            printf("\n");
+                    }
+                        
                 }
+
                 fclose(arquivoAutomoveis);
                 fclose(arquivoProprietario);
 
+                break;
+            //Saída do programa
+            case 3:
+                printf("\nObrigada por usar meu programa!!\nTrabalho da disciplina Banco de Dados 1\n");
+                printf("== Sabrina Caldas Berno ==\n");
                 break;
             default:
                 printf("Opcao invalida. Tente novamente.\n");
