@@ -12,3 +12,9 @@
 --         => 25 Tabelas
 -- 
 -- -----------------------------------------------------------------
+
+CREATE USER 'gerente'@'localhost' IDENTIFIED BY 'ger2024';
+GRANT ALL PRIVILEGES ON  TF2.* TO 'gerente'@'localhost';
+
+CREATE USER 'funcionario'@'localhost' IDENTIFIED BY 'fun2024';
+GRANT SELECT ON  TF2.* TO 'empregado'@'localhost';
