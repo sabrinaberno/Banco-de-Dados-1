@@ -13,7 +13,7 @@
 -- 
 -- -----------------------------------------------------------------
 
-use TF2;
+use TF_2_2C2_PedroSilva;
 
 -- Inserindo dados na tabela TIPOFESTA
 INSERT INTO TIPOFESTA (tipoFesta) VALUES

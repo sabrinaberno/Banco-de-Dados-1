@@ -14,7 +14,7 @@
 -- 
 -- -----------------------------------------------------------------
 
-USE TF2;
+USE TF_2_2C2_PedroSilva;
 
 -- Criando perfis de usuário
 CREATE ROLE 'admin';

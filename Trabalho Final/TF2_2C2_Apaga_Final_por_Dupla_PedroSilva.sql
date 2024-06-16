@@ -13,7 +13,7 @@
 -- 
 -- -----------------------------------------------------------------
 
-use TF2;
+use TF_2_2C2_PedroSilva;
 
 -- Excluir as tabelas da base de dados TF2
 DROP TABLE IF EXISTS CONTRATO;

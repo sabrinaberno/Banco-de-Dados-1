@@ -12,9 +12,9 @@
 --         => 25 Tabelas
 -- 
 -- -----------------------------------------------------------------
-create database if not exists TF2;
+create database if not exists TF_2_2C2_PedroSilva;
 
-use TF2;
+use TF_2_2C2_PedroSilva;
 
 CREATE TABLE IF NOT EXISTS TIPOFESTA (
     idTipoFesta INT PRIMARY KEY AUTO_INCREMENT,
