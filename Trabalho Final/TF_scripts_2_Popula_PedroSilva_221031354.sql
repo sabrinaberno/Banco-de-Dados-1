@@ -48,25 +48,25 @@ INSERT INTO FORMAPAGAMENTO (formaPagamento) VALUES
 ('Dinheiro');
 
 -- Inserindo dados na tabela ENDERECO
-INSERT INTO ENDERECO (CEP, bairro, rua, numero, complemento) VALUES
-(12345678, 'Centro', 'Rua A', 100, 'Apt 101'),
-(87654321, 'Jardim', 'Rua B', 200, 'Casa 2'),
-(11223344, 'Vila Nova', 'Rua C', 300, 'Apt 202'),
-(44332211, 'Alphaville', 'Rua D', 400, 'Casa 4'),
-(55667788, 'Bela Vista', 'Rua E', 500, 'Apt 303'),
-(66778899, 'Liberdade', 'Rua F', 600, 'Casa 5'),
-(99887766, 'Centro', 'Rua G', 700, 'Apt 104'),
-(55668877, 'Morumbi', 'Rua H', 800, 'Casa 6'),
-(33445566, 'Vila Madalena', 'Rua I', 900, 'Apt 404'),
-(77889900, 'Copacabana', 'Rua J', 1000, 'Cobertura 1'),
-(33447788, 'Botafogo', 'Rua K', 1100, 'Casa 7'),
-(11223355, 'Santa Cecília', 'Rua L', 1200, 'Apt 204'),
-(66554433, 'Pinheiros', 'Rua M', 1300, 'Casa 8'),
-(99882211, 'Ipanema', 'Rua N', 1400, 'Apt 504'),
-(44335577, 'Lapa', 'Rua O', 1500, 'Casa 9'),
-(66779988, 'Barra da Tijuca', 'Rua R', 1800, 'Casa 5'),
-(99887755, 'Jardins', 'Rua S', 1900, 'Casa 11'),
-(11225533, 'Campo Belo', 'Rua T', 2000, 'Casa 4');
+INSERT INTO ENDERECO (CEP, bairro, rua, numero, complemento, salaoProprio) VALUES
+(12345678, 'Centro', 'Rua A', 100, 'Apt 101', true),
+(87654321, 'Jardim', 'Rua B', 200, 'Casa 2', false),
+(11223344, 'Vila Nova', 'Rua C', 300, 'Apt 202', false),
+(44332211, 'Alphaville', 'Rua D', 400, 'Casa 4', false),
+(55667788, 'Bela Vista', 'Rua E', 500, 'Apt 303', false),
+(66778899, 'Liberdade', 'Rua F', 600, 'Casa 5', false),
+(99887766, 'Centro', 'Rua G', 700, 'Apt 104', false),
+(55668877, 'Morumbi', 'Rua H', 800, 'Casa 6', false),
+(33445566, 'Vila Madalena', 'Rua I', 900, 'Apt 404', false),
+(77889900, 'Copacabana', 'Rua J', 1000, 'Cobertura 1', false),
+(33447788, 'Botafogo', 'Rua K', 1100, 'Casa 7', false),
+(11223355, 'Santa Cecília', 'Rua L', 1200, 'Apt 204', false),
+(66554433, 'Pinheiros', 'Rua M', 1300, 'Casa 8', false),
+(99882211, 'Ipanema', 'Rua N', 1400, 'Apt 504', false),
+(44335577, 'Lapa', 'Rua O', 1500, 'Casa 9', false),
+(66779988, 'Barra da Tijuca', 'Rua R', 1800, 'Casa 5', false),
+(99887755, 'Jardins', 'Rua S', 1900, 'Casa 11', false),
+(11225533, 'Campo Belo', 'Rua T', 2000, 'Casa 4', false);
 
 -- Inserindo dados na tabela INFRACAO
 INSERT INTO INFRACAO (infracao, gravidade) VALUES
@@ -128,31 +128,31 @@ INSERT INTO NOTAFISCAL (valor, numNotaFiscal, cnpjFornecedor, idIngrediente) VAL
 
 -- Inserindo dados na tabela EVENTO
 INSERT INTO EVENTO (dataEvento, idBuffet, idTipoFesta, idEndereco) VALUES
-('2024-06-01', 1, 1, 1),
+('2024-08-01', 1, 1, 1),
 ('2024-07-01', 2, 2, 1),
 ('2024-08-01', 3, 3, 16),
 ('2024-09-01', 4, 4, 17),
-('2024-10-01', 5, 5, 18);
+('2024-08-10', 5, 5, 18);
 
 -- Inserindo dados na tabela PAGAMENTO
-INSERT INTO PAGAMENTO (qtdParcelas, valorTotal) VALUES
-(2, 5000.00),
-(3, 3000.00),
-(1, 6000.00),
-(2, 4000.00),
-(1, 2000.00);
+INSERT INTO PAGAMENTO (qtdParcelas) VALUES
+(2),
+(3),
+(1),
+(2),
+(1);
 
 -- Inserindo dados na tabela PARCELA
 INSERT INTO PARCELA (valor, dtVencimento, idPagamento, idFormaPagamento) VALUES
 (1000.00, '2024-06-10', 1, 1),
 (4000.00, '2024-07-10', 1, 2),
-(1000.00, '2024-08-10', 2, 3),
-(1000.00, '2024-09-10', 2, 4),
-(1000.00, '2024-10-10', 2, 5),
+(1000.00, '2024-03-10', 2, 3),
+(1000.00, '2024-04-10', 2, 4),
+(1000.00, '2024-05-10', 2, 5),
 (6000.00, '2024-06-15', 3, 4),
 (2000.00, '2024-05-25', 4, 1),
 (2000.00, '2024-06-25', 4, 1),
-(2000.00, '2024-05-20', 4, 2);
+(2000.00, '2024-07-20', 4, 2);
 
 -- Inserindo dados na tabela ALUGUELDECORACAO_aluga
 INSERT INTO ALUGUELDECORACAO_aluga (qtdItens, idItemDecoracao, idEvento) VALUES
@@ -222,21 +222,21 @@ INSERT INTO FICHADO (CTPS, tituloEleitor, cartaoVacinacao, agencia, conta, grauE
 
 -- Inserindo dados na tabela comete
 INSERT INTO comete (cpfFuncionario, idInfracao) VALUES
-(81120675030, 1),  -- Paulo Santos cometeu Atraso
-(55506958048, 2),  -- Lucas Lima cometeu Falta
-(61579900070, 3),  -- Mariana Almeida cometeu Desrespeito
-(37534992001, 4),  -- Rafael Pereira cometeu Roubo
-(76830269059, 5),  -- Camila Rocha cometeu Má Conduta
-(18663344090, 1),  -- Gabriel Mendes cometeu Atraso
-(16707970070, 2),  -- Larissa Silva cometeu Falta
-(05520096015, 3),  -- Roberto Costa cometeu Desrespeito
-(03532924005, 4),  -- Isabela Martins cometeu Roubo
-(66197664046, 5);  -- Fernando Alves cometeu Má Conduta
+(81120675030, 1), 
+(55506958048, 2),
+(61579900070, 3),
+(37534992001, 4),
+(76830269059, 5),
+(18663344090, 1), 
+(16707970070, 2),
+(05520096015, 3), 
+(03532924005, 4), 
+(66197664046, 5); 
 
 -- Inserindo dados na tabela CONTRATO
-INSERT INTO CONTRATO (tipoContrato, idEvento, cpfCliente, idPagamento) VALUES
-('Unificado', 1, 07000578033, 1),
-('Unificado', 2, 11035674033, 2),
-('Buffet', 3, 22478774003, 3),
-('Buffet', 4, 28269422045, 4),
-('Buffet', 5, 42692401050, 5);
+INSERT INTO CONTRATO (idEvento, cpfCliente, idPagamento, dataAssinatura) VALUES
+(1, 07000578033, 1, '2024-05-10'),
+(2, 11035674033, 2, '2024-03-10'),
+(3, 22478774003, 3, '2024-06-15'),
+(4, 28269422045, 4, '2024-04-25'),
+(5, 42692401050, 5, '2024-07-15');
